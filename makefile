@@ -33,8 +33,9 @@ audit:
 .PHONY: build
 build:
 	go mod verify
-	go build -ldflags "-s -w" -o SFS.EXE ./...
-	upx --best --lzma SFS.EXE
+	go build -ldflags "-s -w" -o SFS ./...
+	upx --best --lzma SFS
+	GOOS=windows go build -ldflags "-s -w" -o SFS.exe ./...
 
 ## run: run the application
 .PHONY: run
