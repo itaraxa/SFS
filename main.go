@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -40,7 +41,13 @@ func startFileServer(c *cli.Context) (err error) {
 
 	dir := c.String("dir")
 
-	logger.Infof("server work in the directory: %s", c.String("dir"))
+	// check and resolve path to served directory
+	filaPathAbs, err := filepath.Abs(c.String("dir"))
+	if err != nil {
+		logger.Errorf("cannot resolve directory: %s", c.String("dir"))
+		return err
+	}
+	logger.Infof("server work in the directory: %s", filaPathAbs)
 
 	// Ctrl+C handling
 	signalChan := make(chan os.Signal, 1)
@@ -51,6 +58,7 @@ func startFileServer(c *cli.Context) (err error) {
 		os.Exit(0)
 	}()
 
+	// create and start FileServer handler
 	handler := http.FileServer(http.Dir(dir))
 	if err = http.ListenAndServe(port, handler); err != nil {
 		logger.WithFields(log.Fields{"APP": os.Args[0],
