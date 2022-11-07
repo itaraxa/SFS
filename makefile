@@ -30,6 +30,7 @@ audit:
 # =================================================== #
 
 ## build: build the application
+##     *: you should install UPX packer for target build
 .PHONY: build
 build:
 	go mod verify
